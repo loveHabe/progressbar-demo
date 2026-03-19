@@ -30,13 +30,60 @@
       max-width: 680px;
     }
 
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      gap: 12px;
+    }
+
+    .header-spacer {
+      width: 90px;
+      flex-shrink: 0;
+    }
     h1 {
       font-size: 22px;
       font-weight: 700;
       color: #1a1a2e;
-      margin-bottom: 28px;
-      text-align: center;
       letter-spacing: 1px;
+      flex: 1;
+      text-align: center;
+    }
+
+    .admin-btn {
+      padding: 7px 16px;
+      background: #f8f9fa;
+      color: #495057;
+      border: 1px solid #ced4da;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .admin-btn:hover {
+      background: #e9ecef;
+    }
+
+    .admin-btn.active {
+      background: #4361ee;
+      color: #fff;
+      border-color: #4361ee;
+    }
+
+    .admin-badge {
+      display: inline-block;
+      background: #4361ee;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-left: 6px;
+      vertical-align: middle;
     }
 
     .task {
@@ -56,12 +103,39 @@
       color: #2c3e50;
     }
 
+    .task-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
     .task-value {
       font-size: 14px;
       font-weight: 700;
       color: #4361ee;
       min-width: 38px;
       text-align: right;
+    }
+
+    .delete-btn {
+      padding: 3px 10px;
+      background: #fff0f0;
+      color: #e63946;
+      border: 1px solid #f1aeb5;
+      border-radius: 6px;
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+      display: none;
+      transition: background 0.2s;
+    }
+
+    .delete-btn:hover {
+      background: #ffc9c9;
+    }
+
+    body.admin-mode .delete-btn {
+      display: inline-block;
     }
 
     .bar-wrapper {
@@ -89,6 +163,11 @@
       border-radius: 4px;
       outline: none;
       cursor: pointer;
+      display: none;
+    }
+
+    body.admin-mode .task-slider {
+      display: block;
     }
 
     .task-slider::-webkit-slider-thumb {
@@ -121,10 +200,36 @@
       background: #3a0ca3;
     }
 
+    .admin-actions {
+      display: none;
+      gap: 10px;
+      margin-top: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    body.admin-mode .admin-actions {
+      display: flex;
+    }
+
+    .add-btn {
+      padding: 10px 24px;
+      background: #4cc9f0;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .add-btn:hover {
+      background: #3ab7db;
+    }
+
     .reset-btn {
-      display: block;
-      margin: 8px auto 0;
-      padding: 10px 32px;
+      padding: 10px 24px;
       background: #4361ee;
       color: #fff;
       border: none;
@@ -145,20 +250,155 @@
       color: #adb5bd;
       margin-top: 16px;
     }
+
+    /* ── Modal shared styles ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: #fff;
+      border-radius: 12px;
+      padding: 32px 36px;
+      width: 340px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    }
+
+    .modal-box h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .modal-box label {
+      display: block;
+      font-size: 13px;
+      color: #495057;
+      margin-bottom: 6px;
+    }
+
+    .modal-box input[type="text"],
+    .modal-box input[type="password"] {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid #ced4da;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+      margin-bottom: 16px;
+    }
+
+    .modal-box input[type="text"]:focus,
+    .modal-box input[type="password"]:focus {
+      border-color: #4361ee;
+    }
+
+    .modal-error {
+      color: #e63946;
+      font-size: 13px;
+      margin-bottom: 12px;
+      text-align: center;
+      min-height: 18px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .modal-actions button {
+      padding: 9px 22px;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-cancel {
+      background: #f8f9fa;
+      color: #495057;
+      border: 1px solid #ced4da !important;
+    }
+
+    .btn-cancel:hover {
+      background: #e9ecef;
+    }
+
+    .btn-confirm {
+      background: #4361ee;
+      color: #fff;
+    }
+
+    .btn-confirm:hover {
+      background: #3a0ca3;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>📊 项目实施进度跟踪</h1>
+    <div class="page-header">
+      <div class="header-spacer"></div>
+      <h1>📊 项目实施进度跟踪</h1>
+      <button class="admin-btn" id="adminToggleBtn" onclick="handleAdminToggle()">管理员登录</button>
+    </div>
 
     <div id="tasks"></div>
 
-    <button class="reset-btn" onclick="resetAll()">重置所有进度</button>
+    <div class="admin-actions">
+      <button class="add-btn" onclick="openAddModal()">＋ 添加项目</button>
+      <button class="reset-btn" onclick="resetAll()">重置所有进度</button>
+    </div>
+
     <p class="save-notice">✅ 进度已自动保存到本地浏览器</p>
   </div>
 
+  <!-- Admin login modal -->
+  <div class="modal-overlay" id="loginModal">
+    <div class="modal-box">
+      <h2>🔐 管理员登录</h2>
+      <label for="loginPassword">管理员密码</label>
+      <input type="password" id="loginPassword" placeholder="请输入密码" autocomplete="current-password" />
+      <div class="modal-error" id="loginError"></div>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeLoginModal()">取消</button>
+        <button class="btn-confirm" onclick="submitLogin()">登录</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add project modal -->
+  <div class="modal-overlay" id="addModal">
+    <div class="modal-box">
+      <h2>➕ 添加新项目</h2>
+      <label for="newProjectName">项目名称</label>
+      <input type="text" id="newProjectName" placeholder="请输入项目名称" maxlength="40" />
+      <div class="modal-error" id="addError"></div>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeAddModal()">取消</button>
+        <button class="btn-confirm" onclick="submitAddProject()">添加</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    const TASKS = [
+    const DEFAULT_TASKS = [
       { id: "db_server",     name: "数据库服务器实施进度" },
       { id: "yibei",         name: "易备实施进度" },
       { id: "aircon",        name: "空调实施进度" },
@@ -167,8 +407,31 @@
       { id: "env_ctrl",      name: "环控新增点位实施进度" }
     ];
 
-    const STORAGE_KEY = "progressbar_values";
+    const STORAGE_KEY    = "progressbar_values";
+    const TASKS_KEY      = "progressbar_tasks";
+    const PASSWORD_KEY   = "progressbar_admin_pw";
+    // NOTE: This is client-side only access control. The password guards
+    // against accidental edits, not malicious users (no backend is used).
+    const DEFAULT_PASS   = "admin888";
+    const MAX_PROJECT_NAME_LENGTH = 40;
 
+    let isAdmin = false;
+
+    // ── Task list persistence ────────────────────────────────────────────────
+    function loadTasks() {
+      try {
+        const stored = JSON.parse(localStorage.getItem(TASKS_KEY));
+        return Array.isArray(stored) && stored.length > 0 ? stored : DEFAULT_TASKS;
+      } catch (e) {
+        return DEFAULT_TASKS;
+      }
+    }
+
+    function saveTasks(tasks) {
+      localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
+    }
+
+    // ── Progress values persistence ──────────────────────────────────────────
     function loadValues() {
       try {
         return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
@@ -182,18 +445,25 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(values));
     }
 
+    // ── Password helpers ─────────────────────────────────────────────────────
+    function getAdminPassword() {
+      return localStorage.getItem(PASSWORD_KEY) || DEFAULT_PASS;
+    }
+
+    // ── Render ───────────────────────────────────────────────────────────────
     function renderTasks() {
-      const saved = loadValues();
+      const tasks  = loadTasks();
+      const saved  = loadValues();
       const container = document.getElementById("tasks");
       container.innerHTML = "";
 
-      TASKS.forEach(task => {
+      tasks.forEach(function (task) {
         const value = saved[task.id] !== undefined ? saved[task.id] : 0;
 
-        // Build DOM nodes instead of using innerHTML to avoid XSS
         const div = document.createElement("div");
         div.className = "task";
 
+        // Header row
         const header = document.createElement("div");
         header.className = "task-header";
 
@@ -201,14 +471,25 @@
         nameSpan.className = "task-name";
         nameSpan.textContent = task.name;
 
+        const right = document.createElement("div");
+        right.className = "task-right";
+
         const valSpan = document.createElement("span");
         valSpan.className = "task-value";
         valSpan.id = "val-" + task.id;
         valSpan.textContent = value + "%";
 
-        header.appendChild(nameSpan);
-        header.appendChild(valSpan);
+        const delBtn = document.createElement("button");
+        delBtn.className = "delete-btn";
+        delBtn.textContent = "删除";
+        delBtn.addEventListener("click", function () { deleteTask(task.id); });
 
+        right.appendChild(valSpan);
+        right.appendChild(delBtn);
+        header.appendChild(nameSpan);
+        header.appendChild(right);
+
+        // Progress bar
         const barWrapper = document.createElement("div");
         barWrapper.className = "bar-wrapper";
 
@@ -216,9 +497,9 @@
         barFill.className = "bar-fill";
         barFill.id = "bar-" + task.id;
         barFill.style.width = value + "%";
-
         barWrapper.appendChild(barFill);
 
+        // Slider (admin only via CSS)
         const slider = document.createElement("input");
         slider.type = "range";
         slider.className = "task-slider";
@@ -241,8 +522,10 @@
       const value = parseInt(rawValue, 10);
       if (isNaN(value)) return;
 
-      document.getElementById("bar-" + id).style.width = value + "%";
-      document.getElementById("val-" + id).textContent = value + "%";
+      const barEl = document.getElementById("bar-" + id);
+      const valEl = document.getElementById("val-" + id);
+      if (barEl) barEl.style.width = value + "%";
+      if (valEl) valEl.textContent = value + "%";
 
       const saved = loadValues();
       saved[id] = value;
@@ -252,11 +535,128 @@
     function resetAll() {
       if (!confirm("确认重置所有进度为 0%？")) return;
       const empty = {};
-      TASKS.forEach(t => { empty[t.id] = 0; });
+      loadTasks().forEach(function (t) { empty[t.id] = 0; });
       saveValues(empty);
       renderTasks();
     }
 
+    // ── Delete task ──────────────────────────────────────────────────────────
+    function deleteTask(id) {
+      if (!confirm("确认删除该项目进度条？")) return;
+      const tasks = loadTasks().filter(function (t) { return t.id !== id; });
+      saveTasks(tasks);
+      const saved = loadValues();
+      delete saved[id];
+      saveValues(saved);
+      renderTasks();
+    }
+
+    // ── Admin mode toggle ────────────────────────────────────────────────────
+    function handleAdminToggle() {
+      if (isAdmin) {
+        logoutAdmin();
+      } else {
+        openLoginModal();
+      }
+    }
+
+    function setAdminMode(on) {
+      isAdmin = on;
+      if (on) {
+        document.body.classList.add("admin-mode");
+        const btn = document.getElementById("adminToggleBtn");
+        btn.textContent = "退出管理";
+        btn.classList.add("active");
+      } else {
+        document.body.classList.remove("admin-mode");
+        const btn = document.getElementById("adminToggleBtn");
+        btn.textContent = "管理员登录";
+        btn.classList.remove("active");
+      }
+    }
+
+    function logoutAdmin() {
+      setAdminMode(false);
+    }
+
+    // ── Login modal ──────────────────────────────────────────────────────────
+    function openLoginModal() {
+      document.getElementById("loginPassword").value = "";
+      document.getElementById("loginError").textContent = "";
+      document.getElementById("loginModal").classList.add("open");
+      setTimeout(function () {
+        document.getElementById("loginPassword").focus();
+      }, 50);
+    }
+
+    function closeLoginModal() {
+      document.getElementById("loginModal").classList.remove("open");
+    }
+
+    function submitLogin() {
+      const input = document.getElementById("loginPassword").value;
+      if (input === getAdminPassword()) {
+        closeLoginModal();
+        setAdminMode(true);
+      } else {
+        document.getElementById("loginError").textContent = "密码错误，请重试";
+        document.getElementById("loginPassword").value = "";
+        document.getElementById("loginPassword").focus();
+      }
+    }
+
+    // Allow Enter key in login modal
+    document.getElementById("loginPassword").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") submitLogin();
+    });
+
+    // ── Add project modal ────────────────────────────────────────────────────
+    function openAddModal() {
+      document.getElementById("newProjectName").value = "";
+      document.getElementById("addError").textContent = "";
+      document.getElementById("addModal").classList.add("open");
+      setTimeout(function () {
+        document.getElementById("newProjectName").focus();
+      }, 50);
+    }
+
+    function closeAddModal() {
+      document.getElementById("addModal").classList.remove("open");
+    }
+
+    function submitAddProject() {
+      const name = document.getElementById("newProjectName").value.trim();
+      if (!name) {
+        document.getElementById("addError").textContent = "项目名称不能为空";
+        return;
+      }
+      const tasks = loadTasks();
+      // Generate a collision-resistant unique id using timestamp + random suffix
+      const id = "custom_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8);
+      tasks.push({ id: id, name: name });
+      saveTasks(tasks);
+      const saved = loadValues();
+      saved[id] = 0;
+      saveValues(saved);
+      closeAddModal();
+      renderTasks();
+    }
+
+    // Allow Enter key in add modal
+    document.getElementById("newProjectName").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") submitAddProject();
+    });
+
+    // Close modals when clicking the overlay background
+    document.getElementById("loginModal").addEventListener("click", function (e) {
+      if (e.target === this) closeLoginModal();
+    });
+    document.getElementById("addModal").addEventListener("click", function (e) {
+      if (e.target === this) closeAddModal();
+    });
+
+    // ── Init ─────────────────────────────────────────────────────────────────
+    document.getElementById("newProjectName").maxLength = MAX_PROJECT_NAME_LENGTH;
     renderTasks();
   </script>
 </body>
