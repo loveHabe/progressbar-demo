@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>项目实施进度</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .container {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      padding: 36px 40px;
+      width: 100%;
+      max-width: 680px;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 28px;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+
+    .task {
+      margin-bottom: 28px;
+    }
+
+    .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .task-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    .task-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: #4361ee;
+      min-width: 38px;
+      text-align: right;
+    }
+
+    .bar-wrapper {
+      width: 100%;
+      background: #e9ecef;
+      border-radius: 8px;
+      height: 14px;
+      margin-bottom: 6px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #4361ee, #4cc9f0);
+      transition: width 0.3s ease;
+    }
+
+    .task-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 4px;
+      background: #dee2e6;
+      border-radius: 4px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .task-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #4361ee;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(67, 97, 238, 0.4);
+      transition: background 0.2s;
+    }
+
+    .task-slider::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border: none;
+      border-radius: 50%;
+      background: #4361ee;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(67, 97, 238, 0.4);
+    }
+
+    .task-slider:hover::-webkit-slider-thumb {
+      background: #3a0ca3;
+    }
+
+    .task-slider:hover::-moz-range-thumb {
+      background: #3a0ca3;
+    }
+
+    .reset-btn {
+      display: block;
+      margin: 8px auto 0;
+      padding: 10px 32px;
+      background: #4361ee;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .reset-btn:hover {
+      background: #3a0ca3;
+    }
+
+    .save-notice {
+      text-align: center;
+      font-size: 12px;
+      color: #adb5bd;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📊 项目实施进度跟踪</h1>
+
+    <div id="tasks"></div>
+
+    <button class="reset-btn" onclick="resetAll()">重置所有进度</button>
+    <p class="save-notice">✅ 进度已自动保存到本地浏览器</p>
+  </div>
+
+  <script>
+    const TASKS = [
+      { id: "db_server",     name: "数据库服务器实施进度" },
+      { id: "yibei",         name: "易备实施进度" },
+      { id: "aircon",        name: "空调实施进度" },
+      { id: "netapp",        name: "NetApp推动进度" },
+      { id: "ibm_minicomp",  name: "IBM小机推动进度" },
+      { id: "env_ctrl",      name: "环控新增点位实施进度" }
+    ];
+
+    const STORAGE_KEY = "progressbar_values";
+
+    function loadValues() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+      } catch (e) {
+        console.warn("Failed to load progress from localStorage:", e);
+        return {};
+      }
+    }
+
+    function saveValues(values) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(values));
+    }
+
+    function renderTasks() {
+      const saved = loadValues();
+      const container = document.getElementById("tasks");
+      container.innerHTML = "";
+
+      TASKS.forEach(task => {
+        const value = saved[task.id] !== undefined ? saved[task.id] : 0;
+
+        // Build DOM nodes instead of using innerHTML to avoid XSS
+        const div = document.createElement("div");
+        div.className = "task";
+
+        const header = document.createElement("div");
+        header.className = "task-header";
+
+        const nameSpan = document.createElement("span");
+        nameSpan.className = "task-name";
+        nameSpan.textContent = task.name;
+
+        const valSpan = document.createElement("span");
+        valSpan.className = "task-value";
+        valSpan.id = "val-" + task.id;
+        valSpan.textContent = value + "%";
+
+        header.appendChild(nameSpan);
+        header.appendChild(valSpan);
+
+        const barWrapper = document.createElement("div");
+        barWrapper.className = "bar-wrapper";
+
+        const barFill = document.createElement("div");
+        barFill.className = "bar-fill";
+        barFill.id = "bar-" + task.id;
+        barFill.style.width = value + "%";
+
+        barWrapper.appendChild(barFill);
+
+        const slider = document.createElement("input");
+        slider.type = "range";
+        slider.className = "task-slider";
+        slider.id = "slider-" + task.id;
+        slider.min = "0";
+        slider.max = "100";
+        slider.value = value;
+        slider.addEventListener("input", function () {
+          updateTask(task.id, this.value);
+        });
+
+        div.appendChild(header);
+        div.appendChild(barWrapper);
+        div.appendChild(slider);
+        container.appendChild(div);
+      });
+    }
+
+    function updateTask(id, rawValue) {
+      const value = parseInt(rawValue, 10);
+      if (isNaN(value)) return;
+
+      document.getElementById("bar-" + id).style.width = value + "%";
+      document.getElementById("val-" + id).textContent = value + "%";
+
+      const saved = loadValues();
+      saved[id] = value;
+      saveValues(saved);
+    }
+
+    function resetAll() {
+      if (!confirm("确认重置所有进度为 0%？")) return;
+      const empty = {};
+      TASKS.forEach(t => { empty[t.id] = 0; });
+      saveValues(empty);
+      renderTasks();
+    }
+
+    renderTasks();
+  </script>
+</body>
+</html>
